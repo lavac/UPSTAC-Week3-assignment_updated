@@ -43,24 +43,15 @@ public class LabRequestController {
     private UserLoggedInService userLoggedInService;
 
 
-
     @GetMapping("/to-be-tested")
     @PreAuthorize("hasAnyRole('TESTER')")
-    public List<TestRequest> getForTests()  {
-       return testRequestQueryService.findBy(RequestStatus.INITIATED);
+    public List<TestRequest> getForTests() {
+        return testRequestQueryService.findBy(RequestStatus.INITIATED);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('TESTER')")
-    public List<TestRequest> getForTester()  {
-
-        // Implement This Method
-
-        // Create an object of User class and store the current logged in user first
-        //Implement this method to return the list of test requests assigned to current tester(make use of the above created User object)
-        //Make use of the findByTester() method from testRequestQueryService class
-        // For reference check the method getForTests() method from LabRequestController class
-
+    public List<TestRequest> getForTester() {
         User loggedInUser = userLoggedInService.getLoggedInUser();
         List<TestRequest> testRequests = testRequestQueryService.findByTester(loggedInUser);
         return testRequests;
@@ -70,33 +61,20 @@ public class LabRequestController {
     @PreAuthorize("hasAnyRole('TESTER')")
     @PutMapping("/assign/{id}")
     public TestRequest assignForLabTest(@PathVariable Long id) {
-
-
-
-        User tester =userLoggedInService.getLoggedInUser();
-
-      return   testRequestUpdateService.assignForLabTest(id,tester);
+        User tester = userLoggedInService.getLoggedInUser();
+        return testRequestUpdateService.assignForLabTest(id, tester);
     }
 
     @PreAuthorize("hasAnyRole('TESTER')")
     @PutMapping("/update/{id}")
-    public TestRequest updateLabTest(@PathVariable Long id,@RequestBody CreateLabResult createLabResult) {
-
+    public TestRequest updateLabTest(@PathVariable Long id, @RequestBody CreateLabResult createLabResult) {
         try {
-
-            User tester=userLoggedInService.getLoggedInUser();
-            return testRequestUpdateService.updateLabTest(id,createLabResult,tester);
-
-
+            User tester = userLoggedInService.getLoggedInUser();
+            return testRequestUpdateService.updateLabTest(id, createLabResult, tester);
         } catch (ConstraintViolationException e) {
             throw asConstraintViolation(e);
-        }catch (AppException e) {
+        } catch (AppException e) {
             throw asBadRequest(e.getMessage());
         }
     }
-
-
-
-
-
 }
